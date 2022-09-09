@@ -9,14 +9,14 @@ import {
   UnauthorizedError,
 } from "../expressError";
 
-import { BCRYPT_WORK_FACTOR } from "../config.js";
+import { BCRYPT_WORK_FACTOR } from "../config";
 
 interface UserData {
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  email: string;
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
   isAdmin?: boolean;
 }
 
@@ -91,7 +91,7 @@ class User {
       throw new BadRequestError(`Duplicate username: ${username}`);
     }
 
-    const hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
+    const hashedPassword = await bcrypt.hash(password as string, BCRYPT_WORK_FACTOR);
 
     const result = await db.query(
       `INSERT INTO users
