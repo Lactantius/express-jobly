@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../../src/expressError";
 import { authenticateJWT, ensureLoggedIn } from "../../src/middleware/auth";
 import { SECRET_KEY } from "../../src/config";
+import { NextFunction } from "express";
 
 const testJwt = jwt.sign({ username: "test", isAdmin: false }, SECRET_KEY);
 const badJwt = jwt.sign({ username: "test", isAdmin: false }, "wrong");
@@ -15,7 +16,7 @@ describe("authenticateJWT", function () {
     //this has been provided to show you another way to pass the token. you are only expected to read this code for this project.
     const req = { headers: { authorization: `Bearer ${testJwt}` } };
     const res = { locals: {} };
-    const next = function (err) {
+    const next: NextFunction = function (err) {
       expect(err).toBeFalsy();
     };
     authenticateJWT(req, res, next);
@@ -32,7 +33,7 @@ describe("authenticateJWT", function () {
     expect.assertions(2);
     const req = {};
     const res = { locals: {} };
-    const next = function (err) {
+    const next: NextFunction = function (err) {
       expect(err).toBeFalsy();
     };
     authenticateJWT(req, res, next);
@@ -43,7 +44,7 @@ describe("authenticateJWT", function () {
     expect.assertions(2);
     const req = { headers: { authorization: `Bearer ${badJwt}` } };
     const res = { locals: {} };
-    const next = function (err) {
+    const next: NextFunction = function (err) {
       expect(err).toBeFalsy();
     };
     authenticateJWT(req, res, next);
@@ -56,7 +57,7 @@ describe("ensureLoggedIn", function () {
     expect.assertions(1);
     const req = {};
     const res = { locals: { user: { username: "test", is_admin: false } } };
-    const next = function (err) {
+    const next: NextFunction = function (err) {
       expect(err).toBeFalsy();
     };
     ensureLoggedIn(req, res, next);
@@ -66,7 +67,7 @@ describe("ensureLoggedIn", function () {
     expect.assertions(1);
     const req = {};
     const res = { locals: {} };
-    const next = function (err) {
+    const next: NextFunction = function (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
     };
     ensureLoggedIn(req, res, next);
