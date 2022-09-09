@@ -12,6 +12,12 @@ interface CompanyData {
   logoUrl?: string | null;
 }
 
+interface CompanyFilters {
+  minEmployees?: number;
+  maxEmployees?: number;
+  nameLike?: string;
+}
+
 /** Related functions for companies. */
 
 class Company {
@@ -64,7 +70,7 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
+  static async findAll(filters: CompanyFilters = {}) {
     const companiesRes = await db.query(
       `SELECT handle,
                   name,
