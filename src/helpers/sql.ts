@@ -2,7 +2,7 @@ import { BadRequestError } from "../expressError";
 
 // THIS NEEDS SOME GREAT DOCUMENTATION.
 
-function sqlForPartialUpdate(dataToUpdate: Object, jsToSql) {
+function sqlForPartialUpdate(dataToUpdate: Object, jsToSql: Object) {
   const keys = Object.keys(dataToUpdate);
   if (keys.length === 0) throw new BadRequestError("No data");
 

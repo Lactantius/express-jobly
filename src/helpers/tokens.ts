@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { SECRET_KEY } from "../config";
+import User from "../models/user";
 
 /** return signed JWT from user data. */
 

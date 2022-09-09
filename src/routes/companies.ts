@@ -28,7 +28,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
     const validator = jsonschema.validate(req.body, companyNewSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
+      throw new BadRequestError(errs.join(", "));
     }
 
     const company = await Company.create(req.body);
@@ -91,7 +91,7 @@ router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
     const validator = jsonschema.validate(req.body, companyUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
+      throw new BadRequestError(errs.join(", "));
     }
 
     const company = await Company.update(req.params.handle, req.body);

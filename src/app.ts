@@ -5,9 +5,9 @@
 import express, { NextFunction } from "express";
 import cors from "cors";
 
-const { NotFoundError } = require("./expressError");
+import { ExpressError, NotFoundError } from "./expressError";
 
-const { authenticateJWT } = require("./middleware/auth");
+import { authenticateJWT } from "./middleware/auth";
 import authRoutes from "./routes/auth";
 import companiesRoutes from "./routes/companies";
 import usersRoutes from "./routes/users";

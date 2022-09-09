@@ -11,9 +11,25 @@ import {
 
 import { BCRYPT_WORK_FACTOR } from "../config.js";
 
+interface UserData {
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isAdmin?: boolean;
+}
+
 /** Related functions for users. */
 
 class User {
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  isAdmin?: boolean;
+
   /** authenticate user with username, password.
    *
    * Returns { username, first_name, last_name, email, is_admin }
@@ -63,7 +79,7 @@ class User {
     lastName,
     email,
     isAdmin,
-  }) {
+  }: UserData) {
     const duplicateCheck = await db.query(
       `SELECT username
            FROM users
@@ -122,7 +138,7 @@ class User {
    * Throws NotFoundError if user not found.
    **/
 
-  static async get(username) {
+  static async get(username: string) {
     const userRes = await db.query(
       `SELECT username,
                   first_name AS "firstName",
@@ -158,7 +174,7 @@ class User {
    * or a serious security risks are opened.
    */
 
-  static async update(username: string, data) {
+  static async update(username: string, data: UserData) {
     if (data.password) {
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
     }

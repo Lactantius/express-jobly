@@ -4,9 +4,23 @@ import db from "../db";
 import { BadRequestError, NotFoundError } from "../expressError";
 import { sqlForPartialUpdate } from "../helpers/sql";
 
+interface CompanyData {
+  handle?: string;
+  name?: string;
+  description?: string;
+  numEmployees?: number;
+  logoUrl?: string;
+}
+
 /** Related functions for companies. */
 
 class Company {
+  handle?: string;
+  name?: string;
+  description?: string;
+  numEmployees?: number;
+  logoUrl?: string;
+
   /** Create a company (from data), update db, return new company data.
    *
    * data should be { handle, name, description, numEmployees, logoUrl }
@@ -16,7 +30,13 @@ class Company {
    * Throws BadRequestError if company already in database.
    * */
 
-  static async create({ handle, name, description, numEmployees, logoUrl }) {
+  static async create({
+    handle,
+    name,
+    description,
+    numEmployees,
+    logoUrl,
+  }: CompanyData) {
     const duplicateCheck = await db.query(
       `SELECT handle
            FROM companies
@@ -65,7 +85,7 @@ class Company {
    * Throws NotFoundError if not found.
    **/
 
-  static async get(handle) {
+  static async get(handle: string) {
     const companyRes = await db.query(
       `SELECT handle,
                   name,
@@ -96,7 +116,7 @@ class Company {
    * Throws NotFoundError if not found.
    */
 
-  static async update(handle, data) {
+  static async update(handle: string, data: CompanyData) {
     const { setCols, values } = sqlForPartialUpdate(data, {
       numEmployees: "num_employees",
       logoUrl: "logo_url",
@@ -124,7 +144,7 @@ class Company {
    * Throws NotFoundError if company not found.
    **/
 
-  static async remove(handle) {
+  static async remove(handle: string) {
     const result = await db.query(
       `DELETE
            FROM companies
