@@ -8,8 +8,8 @@ interface CompanyData {
   handle?: string;
   name?: string;
   description?: string;
-  numEmployees?: number;
-  logoUrl?: string;
+  numEmployees?: number | null;
+  logoUrl?: string | null;
 }
 
 /** Related functions for companies. */
