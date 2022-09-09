@@ -9,7 +9,6 @@ describe("sqlForPartialUpdate", () => {
     };
     const dbReady = sqlForPartialUpdate(data, mapping);
     expect(dbReady).toEqual({
-      //setCols: ['"snake_case"=$1', '"more_snake_case"=$2'],
       setCols: '"snake_case"=$1, "more_snake_case"=$2',
       values: ["text", 50],
     });

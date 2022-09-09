@@ -1,11 +1,19 @@
 import { BadRequestError } from "../expressError";
 
-// THIS NEEDS SOME GREAT DOCUMENTATION.
+/** Convert JS object to SQL string and value array for parameterized entry
+ *
+ *  Returns { setCols: '"column_one"=$1, "column_two"=$2...', values: any[] }
+ *
+ * Takes a JS object and an object to SQL column name mapping
+ *
+ * Throws BadRequestError if an object is not entered
+ *
+ * */
 
 function sqlForPartialUpdate(
   dataToUpdate: Object,
   jsToSql: { [key: string]: number | string }
-) {
+): { setCols: string; values: any[]; } {
   const keys = Object.keys(dataToUpdate);
   if (keys.length === 0) throw new BadRequestError("No data");
 
