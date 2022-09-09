@@ -2,10 +2,10 @@
 
 /** Convenience middleware to handle common auth cases in routes. */
 
-const jwt = require("jsonwebtoken");
-const { SECRET_KEY } = require("../config");
-const { UnauthorizedError } = require("../expressError");
-
+import jwt from "jsonwebtoken";
+import { UnauthorizedError } from "../expressError";
+import { SECRET_KEY } from "../config";
+import { NextFunction } from "express";
 
 /** Middleware: Authenticate user.
  *
@@ -15,7 +15,7 @@ const { UnauthorizedError } = require("../expressError");
  * It's not an error if no token was provided or if the token is not valid.
  */
 
-function authenticateJWT(req, res, next) {
+function authenticateJWT(req: any, res: any, next: NextFunction) {
   try {
     const authHeader = req.headers && req.headers.authorization;
     if (authHeader) {
@@ -33,7 +33,7 @@ function authenticateJWT(req, res, next) {
  * If not, raises Unauthorized.
  */
 
-function ensureLoggedIn(req, res, next) {
+function ensureLoggedIn(req: any, res: any, next: NextFunction) {
   try {
     if (!res.locals.user) throw new UnauthorizedError();
     return next();
@@ -42,8 +42,4 @@ function ensureLoggedIn(req, res, next) {
   }
 }
 
-
-module.exports = {
-  authenticateJWT,
-  ensureLoggedIn,
-};
+export { authenticateJWT, ensureLoggedIn };

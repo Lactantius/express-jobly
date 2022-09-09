@@ -2,17 +2,17 @@
 
 /** Express app for jobly. */
 
-const express = require("express");
-const cors = require("cors");
+import express, { NextFunction } from "express";
+import cors from "cors";
 
 const { NotFoundError } = require("./expressError");
 
 const { authenticateJWT } = require("./middleware/auth");
-const authRoutes = require("./routes/auth");
-const companiesRoutes = require("./routes/companies");
-const usersRoutes = require("./routes/users");
+import authRoutes from "./routes/auth";
+import companiesRoutes from "./routes/companies";
+import usersRoutes from "./routes/users";
 
-const morgan = require("morgan");
+import morgan from "morgan";
 
 const app = express();
 
@@ -25,14 +25,13 @@ app.use("/auth", authRoutes);
 app.use("/companies", companiesRoutes);
 app.use("/users", usersRoutes);
 
-
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
   return next(new NotFoundError());
 });
 
 /** Generic error handler; anything unhandled goes here. */
-app.use(function (err, req, res, next) {
+app.use(function (err: ExpressError, req: any, res: any, next: NextFunction) {
   if (process.env.NODE_ENV !== "test") console.error(err.stack);
   const status = err.status || 500;
   const message = err.message;
@@ -42,4 +41,4 @@ app.use(function (err, req, res, next) {
   });
 });
 
-module.exports = app;
+export default app;

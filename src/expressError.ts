@@ -5,7 +5,9 @@
  */
 
 class ExpressError extends Error {
-  constructor(message, status) {
+  status: number;
+
+  constructor(message: string, status: number) {
     super();
     this.message = message;
     this.status = status;
@@ -44,7 +46,7 @@ class ForbiddenError extends ExpressError {
   }
 }
 
-module.exports = {
+export {
   ExpressError,
   NotFoundError,
   UnauthorizedError,
