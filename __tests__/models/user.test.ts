@@ -1,18 +1,18 @@
 "use strict";
 
-const {
+import {
   NotFoundError,
   BadRequestError,
   UnauthorizedError,
-} = require("../expressError");
-const db = require("../db.js");
-const User = require("./user.js");
-const {
+} from "../../src/expressError";
+import db from "../../src/db";
+import User from "../../src/models/user";
+import {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-} = require("./_testCommon");
+} from "./_testCommon";
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
@@ -214,8 +214,7 @@ describe("update", function () {
 describe("remove", function () {
   test("works", async function () {
     await User.remove("u1");
-    const res = await db.query(
-        "SELECT * FROM users WHERE username='u1'");
+    const res = await db.query("SELECT * FROM users WHERE username='u1'");
     expect(res.rows.length).toEqual(0);
   });
 

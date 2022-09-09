@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
-const { createToken } = require("./tokens");
-const { SECRET_KEY } = require("../config");
+import jwt from "jsonwebtoken";
+import { createToken } from "../../src/helpers/tokens";
+import { SECRET_KEY } from "../../src/config";
 
 describe("createToken", function () {
   test("works: not admin", function () {

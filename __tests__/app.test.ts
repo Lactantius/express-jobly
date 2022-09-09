@@ -1,7 +1,7 @@
-const request = require("supertest");
+import request from "supertest";
 
-const app = require("./app");
-const db = require("./db");
+import app from "../src/app";
+import db from "../src/db";
 
 
 test("not found for site 404", async function () {
