@@ -36,7 +36,7 @@ describe("sqlForFiltering", () => {
     };
     expect(sqlForFilters(filters, mapping)).toEqual({
       str: 'WHERE "number_column" > $1 and "string_column" ILIKE $2',
-      values: [1, "string"],
+      values: [1, "%string%"],
     });
   });
 });

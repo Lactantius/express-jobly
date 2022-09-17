@@ -55,9 +55,13 @@ function sqlForFilters(
   const filterString = keys
     .map((filterName, idx) => `${mapping[filterName]} $${idx + 1}`)
     .join(" and ");
+  // Put '%' around any strings so ILIKE works
+  const values = Object.values(filters).map((value) =>
+    typeof value === "string" ? `%${value}%` : value
+  );
   return {
     str: `WHERE ${filterString}`,
-    values: Object.values(filters),
+    values: values,
   };
 }
 
