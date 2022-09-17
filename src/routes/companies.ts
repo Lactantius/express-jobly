@@ -11,6 +11,7 @@ import { ensureLoggedIn } from "../middleware/auth";
 
 const companyNewSchema = require("../../schemas/companyNew.json");
 const companyUpdateSchema = require("../../schemas/companyUpdate.json");
+const companySearchSchema = require("../../schemas/companySearch.json");
 
 const router = Router();
 
@@ -51,7 +52,12 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   try {
-    const companies = await Company.findAll();
+    const validator = jsonschema.validate(req.body, companySearchSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs.join(", "));
+    }
+    const companies = await Company.findAll(req.body);
     return res.json({ companies });
   } catch (err) {
     return next(err);

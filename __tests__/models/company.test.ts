@@ -111,7 +111,7 @@ describe("findAll", function () {
     ]);
   });
   test("works: nameLike filter", async function () {
-    const companies = await Company.findAll({ nameLike: "c2" });
+    const companies = await Company.findAll({ name: "c2" });
     expect(companies).toEqual([
       {
         handle: "c2",

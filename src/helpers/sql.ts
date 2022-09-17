@@ -1,4 +1,15 @@
 import { BadRequestError } from "../expressError";
+import { CompanyFilters } from "../models/company";
+
+interface JobFilters {
+  title?: string;
+  minSalary?: number;
+  hasEquity?: boolean;
+}
+
+interface FilterMaps {
+  [key: string]: string;
+}
 
 /** Convert JS object to SQL string and value array for parameterized entry
  *
@@ -28,24 +39,15 @@ function sqlForPartialUpdate(
   };
 }
 
-interface CompanyFilters {
-  minEmployees?: number;
-  maxEmployees?: number;
-  nameLike?: string;
-}
-
-interface JobFilters {
-  title?: string;
-  minSalary?: number;
-  hasEquity?: boolean;
-}
-
-interface FilterMaps {
-  [key: string]: string;
-}
+/** Convert JS object to string for filtering SQL queries
+ *
+ * Returns { str: 'WHERE "column_one"=$1 and "column_two" < $2 ...', values: any[] }
+ *
+ * Takes a JS object and an object to filter mapping
+ *
+ * */
 
 function sqlForFilters(
-  //filters: CompanyFilters,
   filters: CompanyFilters | JobFilters,
   mapping: FilterMaps
 ): { str: string; values: any[] } {

@@ -15,7 +15,7 @@ interface CompanyData {
 interface CompanyFilters {
   minEmployees?: number;
   maxEmployees?: number;
-  nameLike?: string;
+  name?: string;
 }
 
 /** Related functions for companies. */
@@ -74,7 +74,7 @@ class Company {
     const mapping = {
       minEmployees: '"num_employees" >=',
       maxEmployees: '"num_employees" <=',
-      nameLike: '"name" ILIKE',
+      name: '"name" ILIKE',
     };
     const filter = filters
       ? sqlForFilters(filters, mapping)
@@ -175,3 +175,4 @@ class Company {
 }
 
 export default Company;
+export type { CompanyFilters };
