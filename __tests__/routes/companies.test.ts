@@ -111,6 +111,47 @@ describe("GET /companies", function () {
     });
   });
 
+  test("employee filter for companies", async function () {
+    const resp = await request(app).get("/companies").send({ maxEmployees: 1 });
+    expect(resp.statusCode).toBe(200);
+    expect(resp.body).toEqual({
+      companies: [
+        {
+          handle: "c1",
+          name: "C1",
+          description: "Desc1",
+          numEmployees: 1,
+          logoUrl: "http://c1.img",
+        },
+      ],
+    });
+  });
+
+  test("multiple filters for companies", async function () {
+    const resp = await request(app)
+      .get("/companies")
+      .send({ maxEmployees: 2, minEmployees: 2 });
+    expect(resp.statusCode).toBe(200);
+    expect(resp.body).toEqual({
+      companies: [
+        {
+          handle: "c2",
+          name: "C2",
+          description: "Desc2",
+          numEmployees: 2,
+          logoUrl: "http://c2.img",
+        },
+      ],
+    });
+  });
+
+  test("reject invalid filters", async function () {
+    const resp = await request(app)
+      .get("/companies")
+      .send({ hack: "your app" });
+    expect(resp.statusCode).toBe(400);
+  });
+
   test("fails: test next() handler", async function () {
     // there's no normal failure event which will cause this route to fail ---
     // thus making it hard to test that the error-handler works with it. This
