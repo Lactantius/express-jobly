@@ -27,15 +27,15 @@ describe("sqlForPartialUpdate", () => {
 describe("sqlForFiltering", () => {
   test("gives appropriate filter string", () => {
     const filters = {
-      numFilter: 1,
-      stringFilter: "string",
+      minEmployees: 1,
+      nameLike: "string",
     };
     const mapping = {
-      numFilter: '"number_column" >',
-      stringFilter: '"string_column" ILIKE',
+      minEmployees: '"number_column" >',
+      nameLike: '"string_column" ILIKE',
     };
     expect(sqlForFilters(filters, mapping)).toEqual({
-      filter: 'WHERE "number_column" > $1 and WHERE "string_column" ILIKE $2',
+      str: 'WHERE "number_column" > $1 and WHERE "string_column" ILIKE $2',
       values: [1, "string"],
     });
   });

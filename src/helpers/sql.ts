@@ -34,15 +34,21 @@ interface CompanyFilters {
   nameLike?: string;
 }
 
+interface JobFilters {
+  title?: string;
+  minSalary?: number;
+  hasEquity?: boolean;
+}
+
 interface FilterMaps {
-  [key: string]: string | number;
+  [key: string]: string;
 }
 
 function sqlForFilters(
   //filters: CompanyFilters,
-  filters: FilterMaps,
+  filters: CompanyFilters | JobFilters,
   mapping: FilterMaps
-): { filter: string; values: any[] } {
+): { str: string; values: any[] } {
   const keys = Object.keys(filters);
   const filterString = keys
     .map((filterName, idx) => `WHERE ${mapping[filterName]} $${idx + 1}`)
@@ -51,7 +57,7 @@ function sqlForFilters(
   // {minEmployees: "WHERE num_employees > x"
   // {maxEmployees: "WHERE num_employees < x"
   return {
-    filter: filterString,
+    str: filterString,
     values: Object.values(filters),
   };
 }
