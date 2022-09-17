@@ -52,6 +52,7 @@ function sqlForFilters(
   mapping: FilterMaps
 ): { str: string; values: any[] } {
   const keys = Object.keys(filters);
+  if (keys.length === 0) return { str: "", values: [] };
   const filterString = keys
     .map((filterName, idx) => `${mapping[filterName]} $${idx + 1}`)
     .join(" and ");
