@@ -72,23 +72,23 @@ class Company {
 
   static async findAll(filters?: CompanyFilters) {
     const mapping = {
-      minEmployees: '"num_employees" > ',
-      maxEmployees: '"num_employees < ',
-      nameLike: '"name" ILIKE ',
+      minEmployees: '"num_employees" >=',
+      maxEmployees: '"num_employees" <=',
+      nameLike: '"name" ILIKE',
     };
     const filter = filters
       ? sqlForFilters(filters, mapping)
       : { str: "", values: [] };
-    const queryString =
-      `
+    const queryString = `
       SELECT handle,
         name,
         description,
         num_employees AS "numEmployees",
         logo_url AS "logoUrl"
-      FROM companies` +
-      filter.str +
-      "ORDER BY name";
+      FROM companies
+      ${filter.str}
+      ORDER BY name`;
+    console.log(queryString);
     const companiesRes = await db.query(queryString, filter.values);
     return companiesRes.rows;
   }

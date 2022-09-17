@@ -51,13 +51,10 @@ function sqlForFilters(
 ): { str: string; values: any[] } {
   const keys = Object.keys(filters);
   const filterString = keys
-    .map((filterName, idx) => `WHERE ${mapping[filterName]} $${idx + 1}`)
+    .map((filterName, idx) => `${mapping[filterName]} $${idx + 1}`)
     .join(" and ");
-  // {nameLike: "WHERE name ILIKE '%string%'(or and)"
-  // {minEmployees: "WHERE num_employees > x"
-  // {maxEmployees: "WHERE num_employees < x"
   return {
-    str: filterString,
+    str: `WHERE ${filterString}`,
     values: Object.values(filters),
   };
 }
