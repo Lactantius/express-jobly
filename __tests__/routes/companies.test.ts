@@ -152,6 +152,13 @@ describe("GET /companies", function () {
     expect(resp.statusCode).toBe(400);
   });
 
+  test("reject if minEmployees > maxEmployees", async function () {
+    const resp = await request(app)
+      .get("/companies")
+      .send({ minEmployees: 2, maxEmployees: 1 });
+    expect(resp.statusCode).toBe(400);
+  });
+
   test("fails: test next() handler", async function () {
     // there's no normal failure event which will cause this route to fail ---
     // thus making it hard to test that the error-handler works with it. This

@@ -57,6 +57,16 @@ router.get("/", async function (req, res, next) {
       const errs = validator.errors.map((e) => e.stack);
       throw new BadRequestError(errs.join(", "));
     }
+    // There's probably a way to do this in the schema, but it was non-obvious
+    if (
+      req.body.minEmployees &&
+      req.body.maxEmployees &&
+      req.body.minEmployees > req.body.maxEmployees
+    ) {
+      throw new BadRequestError(
+        "Max employees cannot be less than min employees"
+      );
+    }
     const companies = await Company.findAll(req.body);
     return res.json({ companies });
   } catch (err) {
