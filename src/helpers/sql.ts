@@ -13,7 +13,7 @@ import { BadRequestError } from "../expressError";
 function sqlForPartialUpdate(
   dataToUpdate: Object,
   jsToSql: { [key: string]: number | string }
-): { setCols: string; values: any[]; } {
+): { setCols: string; values: any[] } {
   const keys = Object.keys(dataToUpdate);
   if (keys.length === 0) throw new BadRequestError("No data");
 
@@ -28,4 +28,32 @@ function sqlForPartialUpdate(
   };
 }
 
-export { sqlForPartialUpdate };
+interface CompanyFilters {
+  minEmployees?: number;
+  maxEmployees?: number;
+  nameLike?: string;
+}
+
+interface FilterMaps {
+  [key: string]: string | number;
+}
+
+function sqlForFilters(
+  //filters: CompanyFilters,
+  filters: FilterMaps,
+  mapping: FilterMaps
+): { filter: string; values: any[] } {
+  const keys = Object.keys(filters);
+  const filterString = keys
+    .map((filterName, idx) => `WHERE ${mapping[filterName]} $${idx + 1}`)
+    .join(" and ");
+  // {nameLike: "WHERE name ILIKE '%string%'(or and)"
+  // {minEmployees: "WHERE num_employees > x"
+  // {maxEmployees: "WHERE num_employees < x"
+  return {
+    filter: filterString,
+    values: Object.values(filters),
+  };
+}
+
+export { sqlForPartialUpdate, sqlForFilters };

@@ -1,5 +1,5 @@
 import { BadRequestError } from "../../src/expressError";
-import { sqlForPartialUpdate } from "../../src/helpers/sql";
+import { sqlForFilters, sqlForPartialUpdate } from "../../src/helpers/sql";
 
 describe("sqlForPartialUpdate", () => {
   test("converts JSON for better db entry", () => {
@@ -21,5 +21,22 @@ describe("sqlForPartialUpdate", () => {
       moreCamelCase: "more_snake_case",
     };
     expect(() => sqlForPartialUpdate(data, mapping)).toThrow(BadRequestError);
+  });
+});
+
+describe("sqlForFiltering", () => {
+  test("gives appropriate filter string", () => {
+    const filters = {
+      numFilter: 1,
+      stringFilter: "string",
+    };
+    const mapping = {
+      numFilter: '"number_column" >',
+      stringFilter: '"string_column" ILIKE',
+    };
+    expect(sqlForFilters(filters, mapping)).toEqual({
+      filter: 'WHERE "number_column" > $1 and WHERE "string_column" ILIKE $2',
+      values: [1, "string"],
+    });
   });
 });

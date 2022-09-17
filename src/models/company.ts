@@ -2,7 +2,7 @@
 
 import db from "../db";
 import { BadRequestError, NotFoundError } from "../expressError";
-import { sqlForPartialUpdate } from "../helpers/sql";
+import { sqlForPartialUpdate, sqlForFilters } from "../helpers/sql";
 
 interface CompanyData {
   handle?: string;
@@ -70,7 +70,13 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(filters: CompanyFilters = {}) {
+  static async findAll(filters?: CompanyFilters) {
+    const mapping = {
+      minEmployees: "WHERE num_employees > ",
+      maxEmployees: "WHERE num_employees < ",
+      nameLike: "WHERE name ILIKE ",
+    };
+    const filterString = filters ? sqlForFilters(filters, mapping) : "";
     const companiesRes = await db.query(
       `SELECT handle,
                   name,
