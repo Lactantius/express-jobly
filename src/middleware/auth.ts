@@ -42,4 +42,14 @@ function ensureLoggedIn(req: any, res: any, next: NextFunction) {
   }
 }
 
-export { authenticateJWT, ensureLoggedIn };
+function ensureAdmin(req: any, res: any, next: NextFunction) {
+  try {
+    if (!res.locals.user || !res.locals.user.isAdmin)
+      throw new UnauthorizedError();
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export { authenticateJWT, ensureLoggedIn, ensureAdmin };

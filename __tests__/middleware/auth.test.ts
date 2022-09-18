@@ -2,7 +2,11 @@
 
 import jwt from "jsonwebtoken";
 import { UnauthorizedError } from "../../src/expressError";
-import { authenticateJWT, ensureLoggedIn } from "../../src/middleware/auth";
+import {
+  authenticateJWT,
+  ensureLoggedIn,
+  ensureAdmin,
+} from "../../src/middleware/auth";
 import { SECRET_KEY } from "../../src/config";
 import { NextFunction } from "express";
 
@@ -71,5 +75,26 @@ describe("ensureLoggedIn", function () {
       expect(err instanceof UnauthorizedError).toBeTruthy();
     };
     ensureLoggedIn(req, res, next);
+  });
+});
+
+describe("ensureAdmin", function () {
+  test("works", function () {
+    expect.assertions(1);
+    const req = {};
+    const res = { locals: { user: { username: "test", isAdmin: true } } };
+    const next: NextFunction = function (err) {
+      expect(err).toBeFalsy();
+    };
+    ensureAdmin(req, res, next);
+  });
+  test("unauth if not admin", function () {
+    expect.assertions(1);
+    const req = {};
+    const res = { locals: { user: { username: "test", isAdmin: false } } };
+    const next: NextFunction = function (err) {
+      expect(err instanceof UnauthorizedError).toBeTruthy();
+    };
+    ensureAdmin(req, res, next);
   });
 });
