@@ -97,9 +97,12 @@ class Job {
                   title,
                   salary,
                   equity,
-                  company_handle AS "companyHandle"
-           FROM jobs
-           WHERE id = $1`,
+          json_build_object('handle', c.handle, 'name', c.name,
+          'description', c.description, 'numEmployees', c.num_employees, 'logoUrl', c.logo_url) AS company
+        FROM jobs
+        JOIN companies AS c
+        ON c.handle = jobs.company_handle
+      WHERE id = $1`,
       [id]
     );
 

@@ -91,13 +91,20 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let job = await Job.get(1);
-    expect(job).toEqual({
-      id: 1,
+    const jobs = await Job.findAll();
+    const id = jobs[0].id;
+    let job = await Job.get(id);
+    expect(removeId(job)).toEqual({
       title: "J1",
       salary: 50000,
-      equity: ".05",
-      companyHandle: "c1",
+      equity: "0.05",
+      company: {
+        description: "Desc1",
+        handle: "c1",
+        logoUrl: "http://c1.img",
+        name: "C1",
+        numEmployees: 1,
+      },
     });
   });
 
