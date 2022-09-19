@@ -87,36 +87,44 @@ router.get(
  *
  * Returns { username, firstName, lastName, email, isAdmin }
  *
- * Authorization required: login
+ * Authorization required: admin or same user
  **/
 
-router.patch("/:username", ensureLoggedIn, async function (req, res, next) {
-  try {
-    const validator = jsonschema.validate(req.body, userUpdateSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
-    }
+router.patch(
+  "/:username",
+  ensureAdminOrSameUser,
+  async function (req, res, next) {
+    try {
+      const validator = jsonschema.validate(req.body, userUpdateSchema);
+      if (!validator.valid) {
+        const errs = validator.errors.map((e) => e.stack);
+        throw new BadRequestError(errs);
+      }
 
-    const user = await User.update(req.params.username, req.body);
-    return res.json({ user });
-  } catch (err) {
-    return next(err);
+      const user = await User.update(req.params.username, req.body);
+      return res.json({ user });
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
 
 /** DELETE /[username]  =>  { deleted: username }
  *
- * Authorization required: login
+ * Authorization required: admin or same user
  **/
 
-router.delete("/:username", ensureLoggedIn, async function (req, res, next) {
-  try {
-    await User.remove(req.params.username);
-    return res.json({ deleted: req.params.username });
-  } catch (err) {
-    return next(err);
+router.delete(
+  "/:username",
+  ensureAdminOrSameUser,
+  async function (req, res, next) {
+    try {
+      await User.remove(req.params.username);
+      return res.json({ deleted: req.params.username });
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
 
 export default router;
