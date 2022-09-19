@@ -90,6 +90,89 @@ describe("findAll", function () {
       },
     ]);
   });
+  test("works: minSalary filter", async function () {
+    const jobs = await Job.findAll({ minSalary: 65000 });
+    expect(jobs.map(removeId)).toEqual([
+      {
+        title: "J3",
+        salary: 70000,
+        equity: "0.1",
+        company: {
+          description: "Desc2",
+          handle: "c2",
+          logoUrl: "http://c2.img",
+          name: "C2",
+          numEmployees: 2,
+        },
+      },
+    ]);
+  });
+  test("works: hasEquity filter", async function () {
+    const jobs = await Job.findAll({ hasEquity: true });
+    expect(jobs.map(removeId)).toEqual([
+      {
+        title: "J1",
+        salary: 50000,
+        equity: "0.05",
+        company: {
+          description: "Desc1",
+          handle: "c1",
+          logoUrl: "http://c1.img",
+          name: "C1",
+          numEmployees: 1,
+        },
+      },
+      {
+        title: "J3",
+        salary: 70000,
+        equity: "0.1",
+        company: {
+          description: "Desc2",
+          handle: "c2",
+          logoUrl: "http://c2.img",
+          name: "C2",
+          numEmployees: 2,
+        },
+      },
+    ]);
+  });
+  test("works: title filter", async function () {
+    const jobs = await Job.findAll({ title: "3" });
+    expect(jobs.map(removeId)).toEqual([
+      {
+        title: "J3",
+        salary: 70000,
+        equity: "0.1",
+        company: {
+          description: "Desc2",
+          handle: "c2",
+          logoUrl: "http://c2.img",
+          name: "C2",
+          numEmployees: 2,
+        },
+      },
+    ]);
+  });
+  test("works: combined filters", async function () {
+    const jobs = await Job.findAll({
+      hasEquity: true,
+      minSalary: 65000,
+    });
+    expect(jobs.map(removeId)).toEqual([
+      {
+        title: "J3",
+        salary: 70000,
+        equity: "0.1",
+        company: {
+          description: "Desc2",
+          handle: "c2",
+          logoUrl: "http://c2.img",
+          name: "C2",
+          numEmployees: 2,
+        },
+      },
+    ]);
+  });
 });
 
 /************************************** get */

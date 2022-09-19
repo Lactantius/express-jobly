@@ -62,7 +62,7 @@ class Job {
     const mapping = {
       title: '"title" ILIKE',
       minSalary: '"salary" >',
-      hasEquity: '"equity" > 0',
+      hasEquity: '"equity" >',
     };
     const filter = filters
       ? sqlForFilters(filters, mapping)
@@ -131,14 +131,15 @@ class Job {
     });
     const idVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE jobs
-                      SET ${setCols} 
-                      WHERE id = ${idVarIdx}
-                      RETURNING id,
-                                title,
-                                salary,
-                                equity,
-                                company_handle AS "companyHandle"`;
+    const querySql = `
+      UPDATE jobs
+      SET ${setCols}
+      WHERE id = ${idVarIdx}
+      RETURNING id,
+                title,
+                salary,
+                equity,
+                company_handle AS "companyHandle"`;
     const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
 

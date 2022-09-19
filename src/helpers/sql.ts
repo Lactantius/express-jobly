@@ -57,9 +57,9 @@ function sqlForFilters(
     .map((filterName, idx) => `${mapping[filterName]} $${idx + 1}`)
     .join(" and ");
   // Put '%' around any strings so ILIKE works
-  const values = Object.values(filters).map((value) =>
-    typeof value === "string" ? `%${value}%` : value
-  );
+  const values = Object.values(filters)
+    .map((value) => (typeof value === "string" ? `%${value}%` : value))
+    .map((value) => (value === true ? 0 : value)); // For the hasEquity filter; hacky
   return {
     str: `WHERE ${filterString}`,
     values: values,
