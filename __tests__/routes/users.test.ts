@@ -42,7 +42,8 @@ describe("POST /users", function () {
         lastName: "Last-newL",
         email: "new@email.com",
         isAdmin: false,
-      }, token: expect.any(String),
+      },
+      token: expect.any(String),
     });
   });
 
@@ -66,21 +67,20 @@ describe("POST /users", function () {
         lastName: "Last-newL",
         email: "new@email.com",
         isAdmin: true,
-      }, token: expect.any(String),
+      },
+      token: expect.any(String),
     });
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app)
-      .post("/users")
-      .send({
-        username: "u-new",
-        firstName: "First-new",
-        lastName: "Last-newL",
-        password: "password-new",
-        email: "new@email.com",
-        isAdmin: true,
-      });
+    const resp = await request(app).post("/users").send({
+      username: "u-new",
+      firstName: "First-new",
+      lastName: "Last-newL",
+      password: "password-new",
+      email: "new@email.com",
+      isAdmin: true,
+    });
     expect(resp.statusCode).toEqual(401);
   });
 
@@ -120,6 +120,13 @@ describe("GET /users", function () {
     expect(resp.body).toEqual({
       users: [
         {
+          username: "admin",
+          firstName: "Admin",
+          lastName: "Adminson",
+          email: "admin@user.com",
+          isAdmin: true,
+        },
+        {
           username: "u1",
           firstName: "U1F",
           lastName: "U1L",
@@ -145,8 +152,7 @@ describe("GET /users", function () {
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app)
-      .get("/users");
+    const resp = await request(app).get("/users");
     expect(resp.statusCode).toEqual(401);
   });
 
@@ -181,8 +187,7 @@ describe("GET /users/:username", function () {
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app)
-      .get(`/users/u1`);
+    const resp = await request(app).get(`/users/u1`);
     expect(resp.statusCode).toEqual(401);
   });
 
@@ -216,11 +221,9 @@ describe("PATCH /users/:username", () => {
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app)
-      .patch(`/users/u1`)
-      .send({
-        firstName: "New",
-      });
+    const resp = await request(app).patch(`/users/u1`).send({
+      firstName: "New",
+    });
     expect(resp.statusCode).toEqual(401);
   });
 
@@ -276,8 +279,7 @@ describe("DELETE /users/:username", function () {
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app)
-      .delete(`/users/u1`);
+    const resp = await request(app).delete(`/users/u1`);
     expect(resp.statusCode).toEqual(401);
   });
 
