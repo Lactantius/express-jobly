@@ -88,5 +88,6 @@ export {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  adminToken,
   u1Token,
 };

@@ -1,7 +1,7 @@
 "use strict";
 
 import jwt from "jsonwebtoken";
-import { UnauthorizedError } from "../../src/expressError";
+import { UnauthorizedError, ForbiddenError } from "../../src/expressError";
 import {
   authenticateJWT,
   ensureLoggedIn,
@@ -88,10 +88,19 @@ describe("ensureAdmin", function () {
     };
     ensureAdmin(req, res, next);
   });
-  test("unauth if not admin", function () {
+  test("forbidden if not admin", function () {
     expect.assertions(1);
     const req = {};
     const res = { locals: { user: { username: "test", isAdmin: false } } };
+    const next: NextFunction = function (err) {
+      expect(err instanceof ForbiddenError).toBeTruthy();
+    };
+    ensureAdmin(req, res, next);
+  });
+  test("unauth if no login", function () {
+    expect.assertions(1);
+    const req = {};
+    const res = { locals: {} };
     const next: NextFunction = function (err) {
       expect(err instanceof UnauthorizedError).toBeTruthy();
     };

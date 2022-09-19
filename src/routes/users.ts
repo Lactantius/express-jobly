@@ -8,7 +8,7 @@ import express from "express";
 import User from "../models/user";
 import { createToken } from "../helpers/tokens";
 
-const { ensureLoggedIn } = require("../middleware/auth");
+const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const userNewSchema = require("../../schemas/userNew.json");
 const userUpdateSchema = require("../../schemas/userUpdate.json");
@@ -27,7 +27,7 @@ const router = express.Router();
  * Authorization required: login
  **/
 
-router.post("/", ensureLoggedIn, async function (req, res, next) {
+router.post("/", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, userNewSchema);
     if (!validator.valid) {

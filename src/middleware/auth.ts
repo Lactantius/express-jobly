@@ -3,7 +3,7 @@
 /** Convenience middleware to handle common auth cases in routes. */
 
 import jwt from "jsonwebtoken";
-import { UnauthorizedError } from "../expressError";
+import { UnauthorizedError, ForbiddenError } from "../expressError";
 import { SECRET_KEY } from "../config";
 import { NextFunction } from "express";
 
@@ -49,8 +49,8 @@ function ensureLoggedIn(req: any, res: any, next: NextFunction) {
 
 function ensureAdmin(req: any, res: any, next: NextFunction) {
   try {
-    if (!res.locals.user || !res.locals.user.isAdmin)
-      throw new UnauthorizedError();
+    if (!res.locals.user) throw new UnauthorizedError();
+    if (!res.locals.user.isAdmin) throw new ForbiddenError();
     return next();
   } catch (err) {
     return next(err);
