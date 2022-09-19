@@ -124,28 +124,28 @@ describe("update", function () {
   const updateData = {
     title: "New",
     salary: 900000,
-    equity: ".5",
+    equity: "0.5",
     companyHandle: "c3",
   };
 
   test("works", async function () {
-    let job = await Job.update(1, updateData);
-    expect(job).toEqual({
-      id: 1,
+    const jobs = await Job.findAll();
+    const id = jobs[0].id;
+    let job = await Job.update(id, updateData);
+    expect(removeId(job)).toEqual({
       ...updateData,
     });
 
     const result = await db.query(
       `SELECT id, title, salary, equity, company_handle AS "companyHandle"
            FROM jobs
-           WHERE id = 1;`
+           WHERE id = ${id};`
     );
-    expect(result.rows).toEqual([
+    expect(result.rows.map(removeId)).toEqual([
       {
-        id: 1,
         title: "New",
         salary: 900000,
-        equity: ".5",
+        equity: "0.5",
         companyHandle: "c3",
       },
     ]);

@@ -129,16 +129,17 @@ class Job {
     const { setCols, values } = sqlForPartialUpdate(data, {
       companyHandle: "company_handle",
     });
+    const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE jobs
                       SET ${setCols} 
-                      WHERE id = $1
+                      WHERE id = ${idVarIdx}
                       RETURNING id,
                                 title,
                                 salary,
                                 equity,
                                 company_handle AS "companyHandle"`;
-    const result = await db.query(querySql, [id, ...values]);
+    const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
