@@ -7,6 +7,7 @@ import express from "express";
 
 import User from "../models/user";
 import { createToken } from "../helpers/tokens";
+import { ensureAdminOrSameUser } from "../middleware/auth";
 
 const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
@@ -63,17 +64,21 @@ router.get("/", ensureAdmin, async function (req, res, next) {
  *
  * Returns { username, firstName, lastName, isAdmin }
  *
- * Authorization required: login
+ * Authorization required: admin or same user
  **/
 
-router.get("/:username", ensureLoggedIn, async function (req, res, next) {
-  try {
-    const user = await User.get(req.params.username);
-    return res.json({ user });
-  } catch (err) {
-    return next(err);
+router.get(
+  "/:username",
+  ensureAdminOrSameUser,
+  async function (req, res, next) {
+    try {
+      const user = await User.get(req.params.username);
+      return res.json({ user });
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
 
 /** PATCH /[username] { user } => { user }
  *

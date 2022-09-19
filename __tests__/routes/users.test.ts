@@ -214,10 +214,17 @@ describe("GET /users/:username", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
+  test("forbidden for different user", async function () {
+    const resp = await request(app)
+      .get(`/users/u2`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(403);
+  });
+
   test("not found if user not found", async function () {
     const resp = await request(app)
       .get(`/users/nope`)
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(404);
   });
 });
