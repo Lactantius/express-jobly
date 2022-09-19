@@ -132,7 +132,7 @@ describe("GET /users", function () {
   test("works for users", async function () {
     const resp = await request(app)
       .get("/users")
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${adminToken}`);
     expect(resp.body).toEqual({
       users: [
         {
@@ -167,6 +167,13 @@ describe("GET /users", function () {
     });
   });
 
+  test("forbidden for non-admin", async function () {
+    const resp = await request(app)
+      .get("/users")
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(403);
+  });
+
   test("unauth for anon", async function () {
     const resp = await request(app).get("/users");
     expect(resp.statusCode).toEqual(401);
@@ -179,7 +186,7 @@ describe("GET /users", function () {
     await db.query("DROP TABLE users CASCADE");
     const resp = await request(app)
       .get("/users")
-      .set("authorization", `Bearer ${u1Token}`);
+      .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(500);
   });
 });
