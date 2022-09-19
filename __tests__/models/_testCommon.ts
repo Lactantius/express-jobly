@@ -51,4 +51,21 @@ async function commonAfterAll() {
   await db.end();
 }
 
-export { commonBeforeAll, commonBeforeEach, commonAfterEach, commonAfterAll };
+interface StringIndexed {
+  [index: string]: any;
+}
+
+const removeKey = (key: any) => (obj: StringIndexed) =>
+  Object.keys(obj)
+    .filter((k) => k !== key)
+    .reduce((acc, k) => ((acc[k] = obj[k]), acc), <StringIndexed>{});
+
+const removeId = removeKey("id");
+
+export {
+  commonBeforeAll,
+  commonBeforeEach,
+  commonAfterEach,
+  commonAfterAll,
+  removeId,
+};

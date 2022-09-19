@@ -9,6 +9,7 @@ import {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  removeId,
 } from "./_testCommon";
 
 beforeAll(commonBeforeAll);
@@ -44,27 +45,43 @@ describe("create", function () {
 describe("findAll", function () {
   test("works: no filter", async function () {
     const jobs = await Job.findAll();
-    expect(jobs).toEqual([
+    const noIds = jobs.map(removeId);
+    expect(noIds).toEqual([
       {
-        id: 1,
         title: "J1",
         salary: 50000,
-        equity: ".05",
-        companyHandle: "c1",
+        equity: "0.05",
+        company: {
+          description: "Desc1",
+          handle: "c1",
+          logoUrl: "http://c1.img",
+          name: "C1",
+          numEmployees: 1,
+        },
       },
       {
-        id: 2,
         title: "J2",
         salary: 60000,
         equity: "0",
-        companyHandle: "c1",
+        company: {
+          description: "Desc1",
+          handle: "c1",
+          logoUrl: "http://c1.img",
+          name: "C1",
+          numEmployees: 1,
+        },
       },
       {
-        id: 3,
         title: "J3",
         salary: 70000,
-        equity: ".1",
-        companyHandle: "c2",
+        equity: "0.1",
+        company: {
+          description: "Desc2",
+          handle: "c2",
+          logoUrl: "http://c2.img",
+          name: "C2",
+          numEmployees: 2,
+        },
       },
     ]);
   });

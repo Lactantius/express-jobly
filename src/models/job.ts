@@ -72,8 +72,11 @@ class Job {
         title,
         salary,
         equity,
-        company_handle AS "companyHandle"
+          json_build_object('handle', c.handle, 'name', c.name,
+          'description', c.description, 'numEmployees', c.num_employees, 'logoUrl', c.logo_url) AS company
       FROM jobs
+      JOIN companies AS c
+      ON c.handle = jobs.company_handle
       ${filter.str}
       ORDER BY title`;
     console.log(queryString);
@@ -132,7 +135,7 @@ class Job {
                                 salary,
                                 equity,
                                 company_handle AS "companyHandle"`;
-    const result = await db.query(querySql, [...values, id]);
+    const result = await db.query(querySql, [id, ...values]);
     const job = result.rows[0];
 
     if (!job) throw new NotFoundError(`No job: ${id}`);
