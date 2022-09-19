@@ -6,8 +6,8 @@ import { sqlForPartialUpdate, sqlForFilters } from "../helpers/sql";
 
 interface CompanyData {
   handle?: string;
-  name?: string;
-  description?: string;
+  name?: string | null;
+  description?: string | null;
   numEmployees?: number | null;
   logoUrl?: string | null;
 }
