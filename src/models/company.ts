@@ -99,6 +99,7 @@ class Company {
    *   where jobs is [{ id, title, salary, equity, companyHandle }, ...]
    *
    * Throws NotFoundError if not found.
+   *
    **/
 
   static async get(handle: string) {
@@ -108,7 +109,7 @@ class Company {
                   description,
                   num_employees AS "numEmployees",
                   logo_url AS "logoUrl"
-           FROM companies
+           FROM companies AS c
            WHERE handle = $1`,
       [handle]
     );
@@ -116,6 +117,18 @@ class Company {
     const company = companyRes.rows[0];
 
     if (!company) throw new NotFoundError(`No company: ${handle}`);
+
+    // Could potentially do this is a single query with a join, but it would take a while figure out.
+    const jobs = await db.query(
+      `SELECT id,
+              title,
+              salary,
+              equity
+         FROM jobs
+         WHERE company_handle = $1`,
+      [handle]
+    );
+    company["jobs"] = jobs.rows;
 
     return company;
   }
