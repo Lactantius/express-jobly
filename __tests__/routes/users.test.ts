@@ -341,10 +341,31 @@ describe("DELETE /users/:username", function () {
 
 /************************************** POST /users/:username/jobs/:id */
 
-test("works for users", async function () {
-  const jobId = await job1();
-  const resp = await request(app)
-    .post(`/users/u1/jobs/${jobId}`)
-    .set("authorization", `Bearer ${u1Token}`);
-  expect(resp.body).toEqual({ applied: jobId });
+describe("POST /users/:username/jobs/:id", function () {
+  test("works for users", async function () {
+    const jobId = await job1();
+    const resp = await request(app)
+      .post(`/users/u1/jobs/${jobId}`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.body).toEqual({ applied: jobId });
+  });
+  test("works for admins", async function () {
+    const jobId = await job1();
+    const resp = await request(app)
+      .post(`/users/u1/jobs/${jobId}`)
+      .set("authorization", `Bearer ${adminToken}`);
+    expect(resp.body).toEqual({ applied: jobId });
+  });
+  test("unauth for anon", async function () {
+    const jobId = await job1();
+    const resp = await request(app).post(`/users/u1/jobs/${jobId}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+  test("forbidden for other user", async function () {
+    const jobId = await job1();
+    const resp = await request(app)
+      .post(`/users/u2/jobs/${jobId}`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(403);
+  });
 });
