@@ -135,12 +135,15 @@ describe("findAll", function () {
 describe("get", function () {
   test("works", async function () {
     let user = await User.get("u1");
+    expect(user.jobs.length).not.toBe(0);
+    user.jobs = [];
     expect(user).toEqual({
       username: "u1",
       firstName: "U1F",
       lastName: "U1L",
       email: "u1@email.com",
       isAdmin: false,
+      jobs: [],
     });
   });
 
@@ -236,7 +239,7 @@ describe("apply", function () {
     const jobId = await job1();
     await User.apply("u1", jobId);
     const res = await db.query("SELECT * FROM applications");
-    expect(res.rows.length).toEqual(1);
+    expect(res.rows.length).toEqual(4);
   });
 
   test("not found if no such job id", async function () {

@@ -143,13 +143,17 @@ class User {
 
   static async get(username: string) {
     const userRes = await db.query(
-      `SELECT username,
-                  first_name AS "firstName",
-                  last_name AS "lastName",
-                  email,
-                  is_admin AS "isAdmin"
-           FROM users
-           WHERE username = $1`,
+      `SELECT u.username,
+                  u.first_name AS "firstName",
+                  u.last_name AS "lastName",
+                  u.email,
+                  u.is_admin AS "isAdmin",
+                  array_agg(a.job_id) AS jobs
+           FROM users AS u
+           LEFT JOIN applications AS a
+           ON a.username = u.username
+           WHERE u.username = $1
+           GROUP BY u.username`,
       [username]
     );
 
