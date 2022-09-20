@@ -199,6 +199,8 @@ describe("GET /users/:username", function () {
     const resp = await request(app)
       .get(`/users/u1`)
       .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.body.user.jobs.length).not.toBe(0);
+    resp.body.user.jobs = [];
     expect(resp.body).toEqual({
       user: {
         username: "u1",
@@ -206,6 +208,7 @@ describe("GET /users/:username", function () {
         lastName: "U1L",
         email: "user1@user.com",
         isAdmin: false,
+        jobs: [],
       },
     });
   });
