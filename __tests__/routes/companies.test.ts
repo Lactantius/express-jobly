@@ -14,6 +14,8 @@ import {
   u1Token,
 } from "./_testCommon";
 
+import { removeId } from "../models/_testCommon";
+
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
@@ -190,6 +192,7 @@ describe("GET /companies", function () {
 describe("GET /companies/:handle", function () {
   test("works for anon", async function () {
     const resp = await request(app).get(`/companies/c1`);
+    resp.body.company.jobs = resp.body.company.jobs.map(removeId);
     expect(resp.body).toEqual({
       company: {
         handle: "c1",
@@ -197,19 +200,24 @@ describe("GET /companies/:handle", function () {
         description: "Desc1",
         numEmployees: 1,
         logoUrl: "http://c1.img",
+        jobs: [
+          { equity: "0.05", salary: 50000, title: "J1" },
+          { equity: "0", salary: 60000, title: "J2" },
+        ],
       },
     });
   });
 
   test("works for anon: company w/o jobs", async function () {
-    const resp = await request(app).get(`/companies/c2`);
+    const resp = await request(app).get(`/companies/c3`);
     expect(resp.body).toEqual({
       company: {
-        handle: "c2",
-        name: "C2",
-        description: "Desc2",
-        numEmployees: 2,
-        logoUrl: "http://c2.img",
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+        jobs: [],
       },
     });
   });
