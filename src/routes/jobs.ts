@@ -85,9 +85,9 @@ router.get("/:id", async function (req, res, next) {
  *
  * Patches job data.
  *
- * fields can be: { name, description, numEmployees, logo_url }
+ * fields can be: { title, salary, equity, companyHandle }
  *
- * Returns { handle, name, description, numEmployees, logo_url }
+ * Returns { title, salary, equity, companyHandle }
  *
  * Authorization required: admin
  */
