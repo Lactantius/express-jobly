@@ -13,6 +13,7 @@ import {
   commonAfterAll,
   adminToken,
   u1Token,
+  job1,
 } from "./_testCommon";
 
 beforeAll(commonBeforeAll);
@@ -336,4 +337,14 @@ describe("DELETE /users/:username", function () {
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(404);
   });
+});
+
+/************************************** POST /users/:username/jobs/:id */
+
+test("works for users", async function () {
+  const jobId = await job1();
+  const resp = await request(app)
+    .post(`/users/u1/jobs/${jobId}`)
+    .set("authorization", `Bearer ${u1Token}`);
+  expect(resp.body).toEqual({ applied: jobId });
 });

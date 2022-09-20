@@ -10,17 +10,13 @@ import {
   commonAfterEach,
   commonAfterAll,
   removeId,
+  job1,
 } from "./_testCommon";
 
 beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
-
-async function job1(): Promise<number> {
-  const jobs = await Job.findAll();
-  return jobs[0].id;
-}
 
 /************************************** create */
 

@@ -91,7 +91,10 @@ class User {
       throw new BadRequestError(`Duplicate username: ${username}`);
     }
 
-    const hashedPassword = await bcrypt.hash(password as string, BCRYPT_WORK_FACTOR);
+    const hashedPassword = await bcrypt.hash(
+      password as string,
+      BCRYPT_WORK_FACTOR
+    );
 
     const result = await db.query(
       `INSERT INTO users
@@ -205,7 +208,7 @@ class User {
 
   /** Delete given user from database; returns undefined. */
 
-  static async remove(username: string) {
+  static async remove(username: string): Promise<void> {
     let result = await db.query(
       `DELETE
            FROM users
@@ -216,6 +219,24 @@ class User {
     const user = result.rows[0];
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
+  }
+
+  /** Apply for a job */
+
+  static async apply(username: string, jobId: number): Promise<void> {
+    try {
+      const result = await db.query(
+        `INSERT INTO applications
+            (username, job_id)
+            VALUES ($1, $2)
+            RETURNING username, job_id`,
+        [username, jobId]
+      );
+      const application = result.rows[0];
+    } catch (err) {
+      // Probably a better way of doing this...
+      throw new NotFoundError(`User ${username} or job id {$jobId} not found`);
+    }
   }
 }
 

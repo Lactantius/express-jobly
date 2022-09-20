@@ -12,6 +12,7 @@ import {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  job1,
 } from "./_testCommon";
 
 beforeAll(commonBeforeAll);
@@ -221,6 +222,26 @@ describe("remove", function () {
   test("not found if no such user", async function () {
     try {
       await User.remove("nope");
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
+
+/************************************** apply */
+
+describe("apply", function () {
+  test("works", async function () {
+    const jobId = await job1();
+    await User.apply("u1", jobId);
+    const res = await db.query("SELECT * FROM applications");
+    expect(res.rows.length).toEqual(1);
+  });
+
+  test("not found if no such job id", async function () {
+    try {
+      await User.apply("u5", 1);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();

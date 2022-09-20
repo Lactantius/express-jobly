@@ -3,7 +3,10 @@ import bcrypt from "bcrypt";
 import db from "../../src/db";
 import { BCRYPT_WORK_FACTOR } from "../../src/config";
 
+import Job from "../../src/models/job";
+
 async function commonBeforeAll() {
+  await db.query("DELETE FROM applications");
   await db.query("DELETE FROM jobs");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM companies");
@@ -62,10 +65,16 @@ const removeKey = (key: any) => (obj: StringIndexed) =>
 
 const removeId = removeKey("id");
 
+async function job1(): Promise<number> {
+  const jobs = await Job.findAll();
+  return jobs[0].id;
+}
+
 export {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
   removeId,
+  job1,
 };

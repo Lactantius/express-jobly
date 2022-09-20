@@ -12,6 +12,7 @@ import {
   commonAfterAll,
   adminToken,
   u1Token,
+  job1,
 } from "./_testCommon";
 
 import { removeId } from "../models/_testCommon";
@@ -20,11 +21,6 @@ beforeAll(commonBeforeAll);
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
-
-async function job1(): Promise<number> {
-  const resp = await request(app).get("/jobs");
-  return resp.body.jobs[0].id;
-}
 
 /************************************** POST /companies */
 

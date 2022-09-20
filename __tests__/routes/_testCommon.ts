@@ -1,5 +1,7 @@
 "use strict";
 
+import request from "supertest";
+import app from "../../src/app";
 import db from "../../src/db";
 import User from "../../src/models/user";
 import Company from "../../src/models/company";
@@ -7,6 +9,8 @@ import Job from "../../src/models/job";
 import { createToken } from "../../src/helpers/tokens";
 
 async function commonBeforeAll() {
+  await db.query("DELETE FROM applications");
+  await db.query("DELETE FROM jobs");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM users");
   // noinspection SqlWithoutWhere
@@ -103,6 +107,11 @@ async function commonAfterAll() {
 const adminToken = createToken({ username: "admin", isAdmin: true });
 const u1Token = createToken({ username: "u1", isAdmin: false });
 
+async function job1(): Promise<number> {
+  const resp = await request(app).get("/jobs");
+  return resp.body.jobs[0].id;
+}
+
 export {
   commonBeforeAll,
   commonBeforeEach,
@@ -110,4 +119,5 @@ export {
   commonAfterAll,
   adminToken,
   u1Token,
+  job1,
 };
