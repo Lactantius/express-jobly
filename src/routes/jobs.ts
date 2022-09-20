@@ -17,9 +17,9 @@ const router = Router();
 
 /** POST / { job } =>  { job }
  *
- * job should be { handle, name, description, numEmployees, logoUrl }
+ * job should be { title, salary, equity, companyHandle }
  *
- * Returns { handle, name, description, numEmployees, logoUrl }
+ * Returns { id, title, salary, equity, companyHandle }
  *
  * Authorization required: admin
  */
@@ -40,12 +40,12 @@ router.post("/", ensureAdmin, async function (req, res, next) {
 });
 
 /** GET /  =>
- *   { companies: [ { handle, name, description, numEmployees, logoUrl }, ...] }
+ *   { jobs: [ { id, title, salary, equity, {...company} }, ...] }
  *
  * Can filter on provided search filters:
- * - minEmployees
- * - maxEmployees
- * - nameLike (will find case-insensitive, partial matches)
+ * - title
+ * - minSalary
+ * - hasEquity
  *
  * Authorization required: none
  */
@@ -58,17 +58,8 @@ router.get("/", async function (req, res, next) {
       throw new BadRequestError(errs.join(", "));
     }
     // There's probably a way to do this in the schema, but it was non-obvious
-    if (
-      req.body.minEmployees &&
-      req.body.maxEmployees &&
-      req.body.minEmployees > req.body.maxEmployees
-    ) {
-      throw new BadRequestError(
-        "Max employees cannot be less than min employees"
-      );
-    }
-    const companies = await Job.findAll(req.body);
-    return res.json({ companies });
+    const jobs = await Job.findAll(req.body);
+    return res.json({ jobs });
   } catch (err) {
     return next(err);
   }

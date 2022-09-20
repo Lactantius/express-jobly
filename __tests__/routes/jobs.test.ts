@@ -46,13 +46,13 @@ describe("POST /jobs", function () {
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app).post("/companies").send(newJob);
+    const resp = await request(app).post("/jobs").send(newJob);
     expect(resp.statusCode).toEqual(401);
   });
 
   test("forbidden for non-admin", async function () {
     const resp = await request(app)
-      .post("/companies")
+      .post("/jobs")
       .send(newJob)
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(403);
@@ -60,10 +60,10 @@ describe("POST /jobs", function () {
 
   test("bad request with missing data", async function () {
     const resp = await request(app)
-      .post("/companies")
+      .post("/jobs")
       .send({
-        handle: "new",
-        numEmployees: 10,
+        title: "new",
+        salary: 10,
       })
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
@@ -71,10 +71,10 @@ describe("POST /jobs", function () {
 
   test("bad request with invalid data", async function () {
     const resp = await request(app)
-      .post("/companies")
+      .post("/jobs")
       .send({
         ...newJob,
-        logoUrl: "not-a-url",
+        salary: "none",
       })
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
@@ -83,97 +83,156 @@ describe("POST /jobs", function () {
 
 /************************************** GET /companies */
 
-describe("GET /companies", function () {
+describe("GET /jobs", function () {
   test("ok for anon", async function () {
-    const resp = await request(app).get("/companies");
-    expect(resp.body).toEqual({
-      companies: [
+    const resp = await request(app).get("/jobs");
+    const noIds = resp.body.jobs.map(removeId);
+    expect({ jobs: noIds }).toEqual({
+      jobs: [
         {
-          handle: "c1",
-          name: "C1",
-          description: "Desc1",
-          numEmployees: 1,
-          logoUrl: "http://c1.img",
+          title: "J1",
+          salary: 50000,
+          equity: "0.05",
+          company: {
+            handle: "c1",
+            name: "C1",
+            description: "Desc1",
+            numEmployees: 1,
+            logoUrl: "http://c1.img",
+          },
         },
         {
-          handle: "c2",
-          name: "C2",
-          description: "Desc2",
-          numEmployees: 2,
-          logoUrl: "http://c2.img",
+          title: "J2",
+          salary: 60000,
+          equity: "0",
+          company: {
+            handle: "c1",
+            name: "C1",
+            description: "Desc1",
+            numEmployees: 1,
+            logoUrl: "http://c1.img",
+          },
         },
         {
-          handle: "c3",
-          name: "C3",
-          description: "Desc3",
-          numEmployees: 3,
-          logoUrl: "http://c3.img",
+          title: "J3",
+          salary: 70000,
+          equity: "0.1",
+          company: {
+            handle: "c2",
+            name: "C2",
+            description: "Desc2",
+            numEmployees: 2,
+            logoUrl: "http://c2.img",
+          },
         },
       ],
     });
   });
 
-  test("name filter for companies", async function () {
-    const resp = await request(app).get("/companies").send({ name: "1" });
+  test("title filter for jobs", async function () {
+    const resp = await request(app).get("/jobs").send({ title: "1" });
     expect(resp.statusCode).toBe(200);
-    expect(resp.body).toEqual({
-      companies: [
+    const noIds = resp.body.jobs.map(removeId);
+    expect({ jobs: noIds }).toEqual({
+      jobs: [
         {
-          handle: "c1",
-          name: "C1",
-          description: "Desc1",
-          numEmployees: 1,
-          logoUrl: "http://c1.img",
+          title: "J1",
+          salary: 50000,
+          equity: "0.05",
+          company: {
+            handle: "c1",
+            name: "C1",
+            description: "Desc1",
+            numEmployees: 1,
+            logoUrl: "http://c1.img",
+          },
         },
       ],
     });
   });
 
-  test("employee filter for companies", async function () {
-    const resp = await request(app).get("/companies").send({ maxEmployees: 1 });
+  test("hasEquity filter for jobs", async function () {
+    const resp = await request(app).get("/jobs").send({ hasEquity: true });
     expect(resp.statusCode).toBe(200);
-    expect(resp.body).toEqual({
-      companies: [
+    const noIds = resp.body.jobs.map(removeId);
+    expect({ jobs: noIds }).toEqual({
+      jobs: [
         {
-          handle: "c1",
-          name: "C1",
-          description: "Desc1",
-          numEmployees: 1,
-          logoUrl: "http://c1.img",
+          title: "J1",
+          salary: 50000,
+          equity: "0.05",
+          company: {
+            handle: "c1",
+            name: "C1",
+            description: "Desc1",
+            numEmployees: 1,
+            logoUrl: "http://c1.img",
+          },
+        },
+        {
+          title: "J3",
+          salary: 70000,
+          equity: "0.1",
+          company: {
+            handle: "c2",
+            name: "C2",
+            description: "Desc2",
+            numEmployees: 2,
+            logoUrl: "http://c2.img",
+          },
         },
       ],
     });
   });
 
-  test("multiple filters for companies", async function () {
+  test("minSalary filter for jobs", async function () {
+    const resp = await request(app).get("/jobs").send({ minSalary: 65000 });
+    expect(resp.statusCode).toBe(200);
+    const noIds = resp.body.jobs.map(removeId);
+    expect({ jobs: noIds }).toEqual({
+      jobs: [
+        {
+          title: "J3",
+          salary: 70000,
+          equity: "0.1",
+          company: {
+            handle: "c2",
+            name: "C2",
+            description: "Desc2",
+            numEmployees: 2,
+            logoUrl: "http://c2.img",
+          },
+        },
+      ],
+    });
+  });
+
+  test("multiple filters for jobs", async function () {
     const resp = await request(app)
-      .get("/companies")
-      .send({ maxEmployees: 2, minEmployees: 2 });
+      .get("/jobs")
+      .send({ minSalary: 65000, hasEquity: true });
     expect(resp.statusCode).toBe(200);
-    expect(resp.body).toEqual({
-      companies: [
+    const noIds = resp.body.jobs.map(removeId);
+    expect({ jobs: noIds }).toEqual({
+      jobs: [
         {
-          handle: "c2",
-          name: "C2",
-          description: "Desc2",
-          numEmployees: 2,
-          logoUrl: "http://c2.img",
+          title: "J3",
+          salary: 70000,
+          equity: "0.1",
+          company: {
+            handle: "c2",
+            name: "C2",
+            description: "Desc2",
+            numEmployees: 2,
+            logoUrl: "http://c2.img",
+          },
         },
       ],
     });
   });
 
   test("reject invalid filters", async function () {
-    const resp = await request(app)
-      .get("/companies")
-      .send({ hack: "your app" });
-    expect(resp.statusCode).toBe(400);
-  });
-
-  test("reject if minEmployees > maxEmployees", async function () {
-    const resp = await request(app)
-      .get("/companies")
-      .send({ minEmployees: 2, maxEmployees: 1 });
+    const resp = await request(app).get("/jobs").send({ hack: "your app" });
     expect(resp.statusCode).toBe(400);
   });
 
@@ -181,9 +240,9 @@ describe("GET /companies", function () {
     // there's no normal failure event which will cause this route to fail ---
     // thus making it hard to test that the error-handler works with it. This
     // should cause an error, all right :)
-    await db.query("DROP TABLE companies CASCADE");
+    await db.query("DROP TABLE jobs CASCADE");
     const resp = await request(app)
-      .get("/companies")
+      .get("/jobs")
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.statusCode).toEqual(500);
   });
@@ -191,7 +250,7 @@ describe("GET /companies", function () {
 
 /************************************** GET /companies/:handle */
 
-describe("GET /companies/:handle", function () {
+describe("GET /jobs/:id", function () {
   test("works for anon", async function () {
     const resp = await request(app).get(`/companies/c1`);
     expect(resp.body).toEqual({
